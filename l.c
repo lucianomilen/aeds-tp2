@@ -56,14 +56,17 @@ int distanciaLevenshtein (const char *palavra1, const char *palavra2){ //https:/
     return dMatriz[tam_palavra1][tam_palavra2];
 }
 
-int compare (const void * a, const void * b) {
-
-  palavra *pA = (palavra *)a;
-  palavra *pB = (palavra *)b;
-
-  if(pA->distancia > pB->distancia) return -1;
-  if(pA->distancia == pB->distancia) return 0;
-  if(pA->distancia < pB->distancia) return 1;
+int compare (const void * a, const void * b)
+{
+  palavra **orderA = (palavra **)a;
+  palavra **orderB = (palavra **)b;
+  if((*orderA)->distancia < (*orderB)->distancia)
+    return -1;
+  else if((*orderA)->distancia == (*orderB)->distancia)
+    return strcmp((*orderA)->txt, (*orderB)->txt);
+  else
+    return 1;
+  // return ( (*orderA)->distancia - (*orderB)->distancia );
 }
 
 int main (void) {
@@ -86,10 +89,18 @@ int main (void) {
     for(i = 0; i < D; i++){
       dicionario[i]->distancia = distanciaLevenshtein (q, dicionario[i]->txt);
     }
-    // qsort(dicionario, D, sizeof(palavra), compare);
+    // printf("antes do sort\n");
+    // for(i = 0; i < D; i++){
+    //   printf("%d\n", dicionario[i]->distancia);
+    // }
+    qsort(dicionario, D, sizeof(palavra*), compare);
+    // printf("depois do sort\n");
+    // for(i = 0; i < D; i++){
+    //   printf("%d\n", dicionario[i]->distancia);
+    // }
     for(i = 0; i < D; i++){
       if(dicionario[i]->distancia <= n)
-        printf("%s | %d\n", dicionario[i]->txt, dicionario[i]->distancia);
+        printf("%s\n", dicionario[i]->txt);
     }
     return 0;
 }
